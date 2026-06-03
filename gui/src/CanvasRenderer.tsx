@@ -1,12 +1,18 @@
 import React, { useEffect, useRef } from 'react';
-import { 
-  Rasterizer, 
-  Vector3, 
-  ViewTransform, 
+import {
+  Rasterizer,
+  Vector3,
+  ViewTransform,
   ProjectionTransform,
-  ModelTransform 
+  ModelTransform,
 } from 'engine';
-import type { Mesh } from 'engine';
+import type { Mesh, ShadingMode } from 'engine';
+
+interface TextureData {
+  pixels: Uint8ClampedArray;
+  width: number;
+  height: number;
+}
 
 interface Props {
   mesh: Mesh;
@@ -15,47 +21,50 @@ interface Props {
   scale: { x: number; y: number; z: number };
   width: number;
   height: number;
+  shadingMode: ShadingMode;
+  textureData: TextureData | null;
 }
 
-const CanvasRenderer: React.FC<Props> = ({ mesh, translation, rotation, scale, width, height }) => {
+const CAMERA_POS = new Vector3(0, 5, 15);
+const LOOK_AT    = new Vector3(0, 4, 0);
+const UP         = new Vector3(0, 1, 0);
+const LIGHT_DIR  = new Vector3(0.5, 1, 3);
+
+const CanvasRenderer: React.FC<Props> = ({
+  mesh, translation, rotation, scale,
+  width, height, shadingMode, textureData,
+}) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rasterizerRef = useRef<Rasterizer | null>(null);
 
   useEffect(() => {
-    if (!rasterizerRef.current) {
-      rasterizerRef.current = new Rasterizer(width, height);
-    }
+    rasterizerRef.current = new Rasterizer(width, height);
   }, [width, height]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas || !rasterizerRef.current) return;
-
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
 
     const rasterizer = rasterizerRef.current;
     rasterizer.clear();
 
-    const model = ModelTransform.getModelMatrix(translation, rotation, scale);
-    const view = ViewTransform.lookAt(
-      new Vector3(0, 5, 15), // Camera position
-      new Vector3(0, 4, 0),  // Looking at the bottle
-      new Vector3(0, 1, 0)   // Up vector
-    );
+    const model      = ModelTransform.getModelMatrix(translation, rotation, scale);
+    const view       = ViewTransform.lookAt(CAMERA_POS, LOOK_AT, UP);
     const projection = ProjectionTransform.perspective(
-      (45 * Math.PI) / 180,
-      width / height,
-      0.1,
-      1000
+      (45 * Math.PI) / 180, width / height, 0.1, 1000
     );
 
-    const lightDir = new Vector3(1, 1, 1);
-    rasterizer.rasterize(mesh, model, view, projection, lightDir);
+    rasterizer.rasterize(mesh, model, view, projection, {
+      mode:      shadingMode,
+      lightDir:  LIGHT_DIR,
+      cameraPos: CAMERA_POS,
+      texture:   textureData ?? undefined,
+    });
 
-    const imageData = new ImageData(rasterizer.getBuffer(), width, height);
-    ctx.putImageData(imageData, 0, 0);
-  }, [mesh, translation, rotation, scale, width, height]);
+    ctx.putImageData(new ImageData(rasterizer.getBuffer(), width, height), 0, 0);
+  }, [mesh, translation, rotation, scale, width, height, shadingMode, textureData]);
 
   return (
     <canvas

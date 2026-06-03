@@ -1,8 +1,11 @@
 export * from './MathEngine';
 export * from './ObjLoader';
-export type { Mesh, Face } from './ObjLoader';
+export type { Mesh, Face, FaceVertex } from './ObjLoader';
 export * from './Transformations';
 export * from './ModelTransform';
 export * from './ViewTransform';
 export * from './ProjectionTransform';
 export * from './Rasterizer';
+export type { ShadingMode, RenderOptions } from './Rasterizer';
+export * from './PhongShader';
+export * from './TextureMapper';
