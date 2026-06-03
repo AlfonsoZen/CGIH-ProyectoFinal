@@ -1,0 +1,7 @@
+{
+  "name": "cgih-tarea3-root",
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter gui dev"
+  }
+}

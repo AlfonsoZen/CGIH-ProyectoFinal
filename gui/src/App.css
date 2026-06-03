@@ -1,0 +1,61 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: #eee;
+  background-color: #242424;
+  min-height: 100vh;
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+}
+
+.main-layout {
+  display: flex;
+  flex-direction: row;
+  gap: 20px;
+  padding: 20px;
+  width: 100%;
+  justify-content: center;
+}
+
+.controls {
+  background: #333;
+  padding: 20px;
+  border-radius: 8px;
+  width: 250px;
+  text-align: left;
+}
+
+.control-group {
+  margin-bottom: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.control-group label {
+  font-size: 0.9rem;
+  margin-top: 5px;
+}
+
+.viewports {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+}
+
+.viewport-item {
+  background: #1a1a1a;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+h4 {
+  margin: 5px 0;
+  color: #aaa;
+}
